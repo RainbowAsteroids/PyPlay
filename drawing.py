@@ -11,7 +11,8 @@ dots = {
     "heart":[],
     "square":[]
 }
-FPS = 10
+FPS = 20
+shape = "square"
 
 for i in range(150, 660, 10):
     dots["square"] = dots["square"]+[[i,150]]
@@ -21,7 +22,6 @@ for i in range(650,140,-10):
     dots["square"] = dots["square"]+[[i,450]]
 for i in range(450,140,-10):
     dots["square"] = dots["square"]+[[150,i]]
-print(dots["square"])
 
 
 pygame.init()
@@ -37,17 +37,30 @@ def draw(shape):
         pygame.draw.rect(gameDisplay, pink if not version else black, dots["square"][i]+[blockSize, blockSize])
         pygame.display.update()
         clock.tick(FPS)
-    printText("Press any key to restart animation!",pink if not version else black)
-def printText(msg,color):
+    printText("Press S to draw a square!",pink if not version else black, [displayWidth/2, displayHeight/2])
+    printText("Press any other letter to replay the animation!",pink if not version else black, [displayWidth/2, displayHeight/2+30])
+def textObjects(text,color):
+    textSurface = font.render(text, True, color)
+    return textSurface, textSurface.get_rect()
+def printText(msg,color,cords):
+    textSurf, textRect = textObjects(msg,color)
+    """
     screenText = font.render(msg, True, color)
-    gameDisplay.blit(screenText, [displayWidth/2, displayHeight/2])
+    gameDisplay.blit(screenText, cords)
+    pygame.display.update()"""
+    textRect.center = (cords[0]), (cords[1])
+    gameDisplay.blit(textSurf, textRect)
     pygame.display.update()
 
-draw("square")
+draw(shape)
 while not gameExit:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
-        elif event.type == pygame.KEYUP:
-            version = not version
-            draw("square")
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_s:
+                version = False
+                shape = "square"
+            else:
+                version = not version
+            draw(shape)
